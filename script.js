@@ -25,7 +25,37 @@
         const messageInput = document.getElementById('messageInput');
         const sendButton = document.getElementById('sendButton');
         const chatMessages = document.getElementById('chatMessages');
-        
+
+        // Проверка загрузки зависимостей
+        function checkDependencies() {
+            const errors = [];
+            if (typeof marked === 'undefined') errors.push('Marked.js (Markdown парсер)');
+            if (typeof hljs === 'undefined') errors.push('Highlight.js (подсветка кода)');
+            if (typeof DOMPurify === 'undefined') errors.push('DOMPurify (санитизация HTML)');
+            if (typeof puter === 'undefined') errors.push('Puter.js (AI интеграция)');
+            if (errors.length > 0) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'message bot';
+                errorDiv.innerHTML = `<div class="message-content">❌ Ошибка загрузки зависимостей:<br>${errors.join('<br>')}<br><br>🔄 Обновите страницу или проверьте интернет-соединение.</div>`;
+                chatMessages.appendChild(errorDiv);
+                console.error('Missing dependencies:', errors);
+                // Отключаем чат если нет Puter.js
+                if (!window.puter) {
+                    messageInput.disabled = true;
+                    messageInput.placeholder = 'Чат недоступен из-за ошибки загрузки';
+                }
+                return false;
+            }
+            return true;
+        }
+
+        // Вызываем проверку после загрузки DOM
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => setTimeout(checkDependencies, 100));
+        } else {
+            setTimeout(checkDependencies, 100); // Задержка для загрузки скриптов
+        }
+
         // Функция: извлекает текст из ответа Puter.js
         function extractText(response) {
             // Если уже строка - возвращаем как есть
@@ -71,8 +101,8 @@
             if (sender === 'bot') {
                 try {
                     const textToParse = extractText(text);
-                    // Парсим Markdown в HTML
-                    contentDiv.innerHTML = marked.parse(textToParse);
+                    // Парсим Markdown в HTML и санитизируем для безопасности
+                    contentDiv.innerHTML = DOMPurify.sanitize(marked.parse(textToParse));
                 } catch (error) {
                     console.error('Markdown parsing error:', error);
                     // Если парсинг Markdown не удался, показываем как есть
