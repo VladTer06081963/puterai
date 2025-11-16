@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat | s.puter</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Библиотеки для Markdown и подсветки кода -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/11.1.1/marked.min.js"></script>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="header-content">
+                <span class="header-title">🤖 Kimi K2</span>
+                <button id="themeToggle" class="theme-toggle" title="Переключить тему">
+                    <span class="theme-icon">🌙</span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">
+                <div class="message-content">
+                    Привет! Я AI-ассистент на базе MoonshotAI/Kimi.
+                    Поддерживаю Markdown разметку:
+                    - Списки
+                    - Код
+                    - <a href="https://puter.com">Ссылки</a>
+                    - Таблицы и многое другое!
+                </div>
+            </div>
+        </div>
+        
+        <div class="chat-input-container">
+            <input 
+                type="text" 
+                id="messageInput" 
+                placeholder="Введите сообщение..." 
+                autocomplete="off"
+            >
+            <button id="sendButton">Отправить</button>
+        </div>
+    </div>
+
+    <script src="https://js.puter.com/v2/"></script>
+    <script src="script.js"></script>
+</body>
+</html>
