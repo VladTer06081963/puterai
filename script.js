@@ -26,45 +26,37 @@
         const sendButton = document.getElementById('sendButton');
         const chatMessages = document.getElementById('chatMessages');
         
-        // КРИТИЧНО ВАЖНАЯ ФУНКЦИЯ: извлекает текст из ответа s.puter
+        // Функция: извлекает текст из ответа Puter.js
         function extractText(response) {
-            // Если это уже строка — возвращаем как есть
+            // Если уже строка - возвращаем как есть
             if (typeof response === 'string') {
                 return response;
             }
-            
-            // Если это объект со структурой message.content (как в s.puter)
-            if (response && typeof response === 'object') {
-                // Проверяем стандартную структуру s.puter: response.message.content
-                if (response.message && response.message.content && typeof response.message.content === 'string') {
+
+            // Для объектов Puter.js - извлекаем из message.content
+            if (typeof response === 'object' && response !== null) {
+                if (response.message && typeof response.message.content === 'string') {
                     return response.message.content;
                 }
-                
-                // Альтернативные возможные поля (на всякий случай)
+
+                // Альтернативные поля (на всякий случай)
                 if (response.text && typeof response.text === 'string') return response.text;
                 if (response.content && typeof response.content === 'string') return response.content;
                 if (response.answer && typeof response.answer === 'string') return response.answer;
-                
-                // Если объект имеет метод toString() (как в структуре выше)
+
+                // Пробуем toString(), если доступен и возвращает валидный текст
                 try {
-                    const stringRepresentation = String(response);
-                    if (stringRepresentation !== '[object Object]') {
-                        return stringRepresentation;
+                    const str = String(response);
+                    if (str && str !== '[object Object]') {
+                        return str;
                     }
                 } catch (e) {
-                    // Игнорируем ошибки toString()
-                }
-                
-                // Если ничего не помогло, возвращаем JSON (для отладки)
-                try {
-                    return JSON.stringify(response, null, 2);
-                } catch (e) {
-                    return String(response);
+                    // Игнорируем ошибки
                 }
             }
-            
-            // Для любых других типов
-            return String(response);
+
+            // Если ни один вариант не сработал
+            return 'Ошибка: Не удалось получить текст ответа от сервера';
         }
         
         // Функция добавления сообщения в чат
