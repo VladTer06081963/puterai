@@ -136,6 +136,7 @@ body {
         opacity: 0;
         transform: translateY(8px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -260,6 +261,7 @@ body {
 }
 
 /* Typing Indicator */
+/* Typing Indicator */
 .typing-indicator {
     color: var(--text-muted);
     font-style: italic;
@@ -275,10 +277,24 @@ body {
 }
 
 @keyframes dots {
-    0%, 20% { content: ''; }
-    40% { content: '.'; }
-    60% { content: '..'; }
-    80%, 100% { content: '...'; }
+
+    0%,
+    20% {
+        content: '';
+    }
+
+    40% {
+        content: '.';
+    }
+
+    60% {
+        content: '..';
+    }
+
+    80%,
+    100% {
+        content: '...';
+    }
 }
 
 /* Input Container */
