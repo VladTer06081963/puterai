@@ -58,10 +58,58 @@ function checkDependencies() {
 }
 
 // Загрузка зависимостей и истории
-function initializeApp() {
+async function initializeApp() {
     if (checkDependencies()) {
-        // Загружаем сохраненную историю чата
-        loadChatHistory();
+        // Проверяем статус авторизации
+        if (puter.auth.isSignedIn()) {
+            // Загружаем сохраненную историю чата
+            loadChatHistory();
+            messageInput.disabled = false;
+            messageInput.placeholder = 'Введите сообщение...';
+        } else {
+            // Показываем кнопку входа
+            showSignInButton();
+        }
+    }
+}
+
+function showSignInButton() {
+    const signInDiv = document.createElement('div');
+    signInDiv.className = 'message bot';
+    signInDiv.innerHTML = `
+        <div class="message-content">
+            👋 Привет! Для использования AI-ассистента необходимо войти в аккаунт Puter.com.
+            <br><br>
+            <button onclick="handleSignIn()" class="signin-button">🔑 Войти через Puter</button>
+        </div>
+    `;
+    chatMessages.appendChild(signInDiv);
+
+    // Блокируем ввод до входа
+    messageInput.disabled = true;
+    messageInput.placeholder = 'Требуется авторизация...';
+}
+
+async function handleSignIn() {
+    try {
+        await puter.auth.signIn();
+
+        // Проверяем успешность входа
+        if (puter.auth.isSignedIn()) {
+            // Удаляем сообщение с кнопкой входа
+            const signInMsg = document.querySelector('.signin-button').closest('.message');
+            if (signInMsg) signInMsg.remove();
+
+            // Разблокируем интерфейс
+            messageInput.disabled = false;
+            messageInput.placeholder = 'Введите сообщение...';
+            loadChatHistory();
+
+            addMessage('✅ Вы успешно вошли в систему!', 'bot');
+        }
+    } catch (error) {
+        console.error('Sign in error:', error);
+        addMessage('❌ Ошибка входа: ' + error.message, 'bot');
     }
 }
 
@@ -224,7 +272,13 @@ async function sendMessage() {
         console.error('AI request error:', error);
 
         // Показываем ошибку в чате
-        addMessage('❌ Ошибка: ' + (error.message || 'Неизвестная ошибка'), 'bot');
+        // Показываем ошибку в чате
+        if (error.message && error.message.includes('401')) {
+            addMessage('❌ Ошибка авторизации. Пожалуйста, войдите в систему.', 'bot');
+            showSignInButton();
+        } else {
+            addMessage('❌ Ошибка: ' + (error.message || 'Неизвестная ошибка'), 'bot');
+        }
     }
 }
 
@@ -243,7 +297,8 @@ messageInput.focus();
 
 // Theme switching functionality
 const themeToggle = document.getElementById('themeToggle');
-const themeIcon = document.querySelector('.theme-icon');
+const clearButton = document.getElementById('clearButton');
+const themeIcon = document.getElementById('themeIconDisplay');
 
 // Load saved theme
 const savedTheme = localStorage.getItem('theme') || 'dark';
@@ -263,4 +318,28 @@ function toggleTheme() {
     updateThemeIcon(newTheme);
 }
 
+function clearChat() {
+    if (confirm('Вы уверены, что хотите очистить историю чата?')) {
+        localStorage.removeItem(CHAT_HISTORY_KEY);
+        chatMessages.innerHTML = '';
+
+        // Restore welcome message
+        const welcomeMsg = `
+            <div class="message bot">
+                <div class="message-content">
+                    Привет! Я AI-ассистент на базе Puter.js.
+                    Поддерживаю Markdown разметку:
+                    - Списки
+                    - Код
+                    - <a href="#">Ссылки</a>
+                    - Таблицы и многое другое!
+                </div>
+            </div>
+        `;
+        chatMessages.innerHTML = welcomeMsg;
+        addMessage('🧹 История чата очищена', 'bot', false);
+    }
+}
+
 themeToggle.addEventListener('click', toggleTheme);
+clearButton.addEventListener('click', clearChat);

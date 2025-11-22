@@ -1,28 +1,40 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Chat | s.puter</title>
     <link rel="stylesheet" href="style.css">
-    
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
     <!-- Библиотеки для Markdown и подсветки кода -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/11.1.1/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js"></script>
 </head>
+
 <body>
     <div class="chat-container">
         <div class="chat-header">
             <div class="header-content">
                 <span class="header-title">🤖 Puter.js</span>
-                <button id="themeToggle" class="theme-toggle" title="Переключить тему">
-                    <span class="theme-icon">🌙</span>
-                </button>
+                <div class="header-actions">
+                    <button id="clearButton" class="theme-toggle" title="Очистить историю">
+                        <span class="theme-icon">🧹</span>
+                    </button>
+                    <button id="themeToggle" class="theme-toggle" title="Переключить тему">
+                        <span class="theme-icon" id="themeIconDisplay">🌙</span>
+                    </button>
+                </div>
             </div>
         </div>
-        
+
         <div class="chat-messages" id="chatMessages">
             <div class="message bot">
                 <div class="message-content">
@@ -35,14 +47,9 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="chat-input-container">
-            <input 
-                type="text" 
-                id="messageInput" 
-                placeholder="Введите сообщение..." 
-                autocomplete="off"
-            >
+            <input type="text" id="messageInput" placeholder="Введите сообщение..." autocomplete="off">
             <button id="sendButton">GO</button>
         </div>
     </div>
@@ -50,4 +57,5 @@
     <script src="https://js.puter.com/v2/"></script>
     <script src="script.js"></script>
 </body>
+
 </html>
